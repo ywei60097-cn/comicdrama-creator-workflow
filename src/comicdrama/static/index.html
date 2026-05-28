@@ -66,37 +66,60 @@
 
         <aside class="settings-pane" aria-label="工作流参数">
           <h2>参数</h2>
-          <section class="preset-grid" aria-label="快捷任务">
-            <button class="preset-button" type="button" data-preset="simplify">小说简炼</button>
-            <button class="preset-button" type="button" data-preset="extract">人物场景提取</button>
-            <button class="preset-button" type="button" data-preset="script">剧本转换</button>
-            <button class="preset-button" type="button" data-preset="batch">批量改名</button>
-            <button class="preset-button" type="button" data-preset="assist">辅助创作</button>
-            <button class="preset-button" type="button" data-preset="all">全流程</button>
+          <section class="task-mode" aria-label="任务模式">
+            <div class="settings-subhead">任务模式</div>
+            <div class="mode-grid">
+              <button class="mode-button active" type="button" data-preset="all">
+                <strong>全流程</strong>
+                <span>精炼、提取、剧本、批量与辅创</span>
+              </button>
+              <button class="mode-button" type="button" data-preset="simplify">
+                <strong>小说简炼</strong>
+                <span>压缩长文并保留主线</span>
+              </button>
+              <button class="mode-button" type="button" data-preset="extract">
+                <strong>人物场景提取</strong>
+                <span>角色、地点、道具与节拍</span>
+              </button>
+              <button class="mode-button" type="button" data-preset="script">
+                <strong>剧本转换</strong>
+                <span>生成旁白或好莱坞格式</span>
+              </button>
+              <button class="mode-button" type="button" data-preset="batch">
+                <strong>批量处理</strong>
+                <span>改名、格式统一和导出预览</span>
+              </button>
+              <button class="mode-button" type="button" data-preset="assist">
+                <strong>辅助创作</strong>
+                <span>给出改编优化建议</span>
+              </button>
+            </div>
           </section>
-          <section class="feature-list" aria-label="功能选择">
-            <div class="settings-subhead">功能选择</div>
-            <label class="feature-option">
-              <input type="checkbox" name="feature" value="simplify" checked />
-              <span>小说精炼</span>
-            </label>
-            <label class="feature-option">
-              <input type="checkbox" name="feature" value="extract_elements" checked />
-              <span>人物场景提取</span>
-            </label>
-            <label class="feature-option">
-              <input type="checkbox" name="feature" value="convert_script" checked />
-              <span>剧本格式转换</span>
-            </label>
-            <label class="feature-option">
-              <input type="checkbox" name="feature" value="batch_process" checked />
-              <span>批量内容处理</span>
-            </label>
-            <label class="feature-option">
-              <input type="checkbox" name="feature" value="assist_adaptation" checked />
-              <span>小说辅助创作</span>
-            </label>
-          </section>
+          <details class="advanced-options">
+            <summary>高级自定义</summary>
+            <section class="feature-list" aria-label="功能选择">
+              <label class="feature-option">
+                <input type="checkbox" name="feature" value="simplify" checked />
+                <span>小说精炼</span>
+              </label>
+              <label class="feature-option">
+                <input type="checkbox" name="feature" value="extract_elements" checked />
+                <span>人物场景提取</span>
+              </label>
+              <label class="feature-option">
+                <input type="checkbox" name="feature" value="convert_script" checked />
+                <span>剧本格式转换</span>
+              </label>
+              <label class="feature-option">
+                <input type="checkbox" name="feature" value="batch_process" checked />
+                <span>批量内容处理</span>
+              </label>
+              <label class="feature-option">
+                <input type="checkbox" name="feature" value="assist_adaptation" checked />
+                <span>小说辅助创作</span>
+              </label>
+            </section>
+          </details>
           <label>
             漫剧风格
             <select id="styleSelect">

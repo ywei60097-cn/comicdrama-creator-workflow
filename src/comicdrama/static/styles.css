@@ -261,24 +261,69 @@ textarea:focus {
   font-weight: 700;
 }
 
-.preset-grid {
+.task-mode {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
-.preset-button {
-  min-height: 36px;
+.mode-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.mode-button {
+  min-height: 58px;
+  display: grid;
+  gap: 3px;
+  align-content: center;
+  padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #fff;
   color: var(--ink);
   cursor: pointer;
+  text-align: left;
 }
 
-.preset-button:hover {
+.mode-button:hover {
   border-color: var(--accent);
+}
+
+.mode-button.active {
+  border-color: var(--accent);
+  background: #eefaf7;
+}
+
+.mode-button strong {
+  font-size: 14px;
+}
+
+.mode-button span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.mode-button.active strong {
   color: var(--accent-strong);
+}
+
+.advanced-options {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-strong);
+}
+
+.advanced-options summary {
+  cursor: pointer;
+  padding: 10px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.advanced-options .feature-list {
+  padding: 0 10px 10px;
 }
 
 .feature-list {
@@ -295,7 +340,7 @@ textarea:focus {
   padding: 7px 9px;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--surface-strong);
+  background: #fff;
   color: var(--ink);
 }
 

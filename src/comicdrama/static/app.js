@@ -40,7 +40,7 @@ const els = {
   resultBody: document.querySelector("#resultBody"),
   tabs: document.querySelectorAll(".tab"),
   features: document.querySelectorAll('input[name="feature"]'),
-  presets: document.querySelectorAll(".preset-button"),
+  modes: document.querySelectorAll(".mode-button"),
 };
 
 els.source.value = sampleText;
@@ -113,9 +113,10 @@ els.features.forEach((feature) => {
   });
 });
 
-els.presets.forEach((preset) => {
-  preset.addEventListener("click", () => {
-    applyPreset(preset.dataset.preset);
+els.modes.forEach((mode) => {
+  mode.addEventListener("click", () => {
+    applyPreset(mode.dataset.preset);
+    els.modes.forEach((item) => item.classList.toggle("active", item === mode));
   });
 });
 
