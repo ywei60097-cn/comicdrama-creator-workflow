@@ -26,6 +26,11 @@
             项目标题
             <input id="titleInput" type="text" value="雨夜来信" />
           </label>
+          <div class="upload-row">
+            <input id="fileInput" type="file" accept=".txt,.md,text/plain,text/markdown" />
+            <button class="secondary-button" id="uploadButton" type="button">上传 TXT / MD</button>
+            <div class="file-meta" id="fileMeta">未选择附件</div>
+          </div>
           <label>
             原始小说文本
             <textarea id="sourceText" spellcheck="false"></textarea>

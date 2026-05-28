@@ -25,6 +25,9 @@ const els = {
   detail: document.querySelector("#detailSelect"),
   ratio: document.querySelector("#ratioInput"),
   ratioValue: document.querySelector("#ratioValue"),
+  file: document.querySelector("#fileInput"),
+  fileMeta: document.querySelector("#fileMeta"),
+  upload: document.querySelector("#uploadButton"),
   run: document.querySelector("#runButton"),
   download: document.querySelector("#downloadButton"),
   loadSample: document.querySelector("#loadSample"),
@@ -42,6 +45,40 @@ els.ratio.addEventListener("input", () => {
 els.loadSample.addEventListener("click", () => {
   els.title.value = "雨夜来信";
   els.source.value = sampleText;
+  els.file.value = "";
+  els.fileMeta.textContent = "已载入示例";
+});
+
+els.upload.addEventListener("click", () => {
+  els.file.click();
+});
+
+els.file.addEventListener("change", async () => {
+  const file = els.file.files && els.file.files[0];
+  if (!file) {
+    els.fileMeta.textContent = "未选择附件";
+    return;
+  }
+  const extension = file.name.split(".").pop().toLowerCase();
+  if (!["txt", "md"].includes(extension)) {
+    els.file.value = "";
+    els.fileMeta.textContent = "仅支持 TXT / MD";
+    setStatus("附件格式不支持", "running");
+    return;
+  }
+  try {
+    const text = await file.text();
+    els.source.value = text;
+    els.title.value = stripExtension(file.name);
+    els.fileMeta.textContent = `${file.name} · ${formatBytes(file.size)}`;
+    state.result = null;
+    els.download.disabled = true;
+    setStatus("附件已导入", "done");
+    render();
+  } catch (error) {
+    els.fileMeta.textContent = "附件读取失败";
+    setStatus("读取失败", "running");
+  }
 });
 
 els.tabs.forEach((tab) => {
@@ -229,6 +266,16 @@ function setStatus(text, className) {
 
 function safeName(value) {
   return value.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/gi, "-").replace(/^-|-$/g, "") || "comicdrama";
+}
+
+function stripExtension(name) {
+  return name.replace(/\.[^.]+$/, "") || "Untitled Novel";
+}
+
+function formatBytes(size) {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / 1024 / 1024).toFixed(1)} MB`;
 }
 
 function escapeHtml(value) {
