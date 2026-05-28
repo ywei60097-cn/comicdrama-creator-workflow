@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/comicdrama/workflow-config.schema.json",
+  "title": "WorkflowConfig",
+  "type": "object",
+  "properties": {
+    "style": { "enum": ["chinese", "japanese", "western", "custom"] },
+    "target_format": { "enum": ["comic_narration", "hollywood"] },
+    "dialogue_retention_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+    "narration_pov": { "enum": ["first_person", "third_person"] },
+    "storyboard_detail": { "enum": ["low", "medium", "high"] },
+    "episode_length": { "type": "string" },
+    "copyright_confirmation": { "type": "boolean" },
+    "genre": { "type": ["string", "null"] },
+    "tone": { "type": ["string", "null"] }
+  },
+  "required": ["copyright_confirmation"],
+  "additionalProperties": false
+}
+

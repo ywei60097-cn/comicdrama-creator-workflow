@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comicdrama-creator-workflow"
+version = "0.1.0"
+description = "Open workflow toolkit for adapting novels into comic-drama scripts, character bibles, and storyboards."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "ComicDrama Creator Contributors" }
+]
+keywords = ["comic-drama", "novel-adaptation", "screenwriting", "workflow", "ai"]
+dependencies = [
+  "pydantic>=2.0",
+  "fastapi>=0.100",
+  "uvicorn>=0.20"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+comicdrama = "comicdrama.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

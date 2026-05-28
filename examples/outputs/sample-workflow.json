@@ -1,0 +1,211 @@
+{
+  "config": {
+    "style": "chinese",
+    "target_format": "comic_narration",
+    "dialogue_retention_ratio": 0.8,
+    "narration_pov": "third_person",
+    "storyboard_detail": "medium",
+    "episode_length": "short",
+    "copyright_confirmation": true,
+    "genre": "urban fantasy",
+    "tone": "suspenseful"
+  },
+  "analysis": {
+    "title": "sample-novel",
+    "synopsis": "林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：“别相信明天早上的自己。”\n他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说：“我在你父亲留下的书房里找到了这个，墙后面还有一扇门。”\n林舟想起父亲失踪前的最后一通电话。电话里，父亲让他无论如何都不要回老宅。可现在，信、玉佩和苏晴的出现，把他推回了那个被封存十年的夜晚。\n老宅书房里满是灰尘，墙后的暗门通向地下。地下室中央摆着一台仍在运行的旧式放映机，银幕上正播放着林舟明天清晨走进钟楼的画面。\n苏晴低声说：“如果这是真的，我们还有六个小时改变结局。”",
+    "story_beats": [
+      {
+        "index": 1,
+        "summary": "林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：“别相信明天早上的自己。”",
+        "source_excerpt": "林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：“别相信明天早上的自己。”"
+      },
+      {
+        "index": 2,
+        "summary": "他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说：“我在你父亲留下的书房里找到了这个，墙后面还有一扇门。”",
+        "source_excerpt": "他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说：“我在你父亲留下的书房里找到了这个，墙后面还有一扇门。”"
+      },
+      {
+        "index": 3,
+        "summary": "林舟想起父亲失踪前的最后一通电话。电话里，父亲让他无论如何都不要回老宅。可现在，信、玉佩和苏晴的出现，把他推回了那个被封存十年的夜晚。",
+        "source_excerpt": "林舟想起父亲失踪前的最后一通电话。电话里，父亲让他无论如何都不要回老宅。可现在，信、玉佩和苏晴的出现，把他推回了那个被封存十年的夜晚。"
+      },
+      {
+        "index": 4,
+        "summary": "老宅书房里满是灰尘，墙后的暗门通向地下。地下室中央摆着一台仍在运行的旧式放映机，银幕上正播放着林舟明天清晨走进钟楼的画面。",
+        "source_excerpt": "老宅书房里满是灰尘，墙后的暗门通向地下。地下室中央摆着一台仍在运行的旧式放映机，银幕上正播放着林舟明天清晨走进钟楼的画面。"
+      },
+      {
+        "index": 5,
+        "summary": "苏晴低声说：“如果这是真的，我们还有六个小时改变结局。”",
+        "source_excerpt": "苏晴低声说：“如果这是真的，我们还有六个小时改变结局。”"
+      }
+    ],
+    "characters": [
+      {
+        "name": "苏晴",
+        "role": "unknown",
+        "first_seen": "”\n\n他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。",
+        "traits": [],
+        "visual_notes": []
+      },
+      {
+        "name": "林舟",
+        "role": "unknown",
+        "first_seen": "# 雨夜来信\n\n林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。",
+        "traits": [],
+        "visual_notes": []
+      }
+    ],
+    "elements": [
+      {
+        "name": "钟楼",
+        "kind": "location",
+        "description": "# 雨夜来信\n\n林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。"
+      },
+      {
+        "name": "玉佩",
+        "kind": "prop",
+        "description": "”\n\n他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。"
+      },
+      {
+        "name": "巷口",
+        "kind": "location",
+        "description": "”\n\n他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。"
+      },
+      {
+        "name": "书房",
+        "kind": "location",
+        "description": "苏晴喘着气说：“我在你父亲留下的书房里找到了这个，墙后面还有一扇门。"
+      },
+      {
+        "name": "老宅",
+        "kind": "location",
+        "description": "电话里，父亲让他无论如何都不要回老宅。"
+      },
+      {
+        "name": "老宅书房",
+        "kind": "location",
+        "description": "老宅书房里满是灰尘，墙后的暗门通向地下。"
+      },
+      {
+        "name": "地下室",
+        "kind": "location",
+        "description": "地下室中央摆着一台仍在运行的旧式放映机，银幕上正播放着林舟明天清晨走进钟楼的画面。"
+      },
+      {
+        "name": "旧式放映机",
+        "kind": "prop",
+        "description": "地下室中央摆着一台仍在运行的旧式放映机，银幕上正播放着林舟明天清晨走进钟楼的画面。"
+      },
+      {
+        "name": "来信",
+        "kind": "prop",
+        "description": "# 雨夜来信\n\n林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。"
+      },
+      {
+        "name": "署名的信",
+        "kind": "prop",
+        "description": "午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：“别相信明天早上的自己。"
+      },
+      {
+        "name": "信纸",
+        "kind": "prop",
+        "description": "午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：“别相信明天早上的自己。"
+      }
+    ]
+  },
+  "simplified_novel": "# 雨夜来信\n\n林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：“别相信明天早上的自己。”\n\n他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说：“我在你父亲留下的书房里找到了这个，墙后面还有一扇门。”",
+  "script": [
+    {
+      "block_type": "panel",
+      "content": "分镜 1",
+      "speaker": null
+    },
+    {
+      "block_type": "narration",
+      "content": "画面中，# 雨夜来信",
+      "speaker": null
+    },
+    {
+      "block_type": "panel",
+      "content": "分镜 2",
+      "speaker": null
+    },
+    {
+      "block_type": "narration",
+      "content": "画面中，林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：",
+      "speaker": null
+    },
+    {
+      "block_type": "dialogue",
+      "content": "别相信明天早上的自己。",
+      "speaker": null
+    },
+    {
+      "block_type": "panel",
+      "content": "分镜 3",
+      "speaker": null
+    },
+    {
+      "block_type": "narration",
+      "content": "画面中，他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说：",
+      "speaker": null
+    },
+    {
+      "block_type": "dialogue",
+      "content": "我在你父亲留下的书房里找到了这个，墙后面还有一扇门。",
+      "speaker": null
+    }
+  ],
+  "storyboard": [
+    {
+      "shot_id": "S001",
+      "scene": "分镜 1",
+      "camera": "cinematic medium shot with character blocking",
+      "action": "画面中，# 雨夜来信",
+      "narration": "画面中，# 雨夜来信",
+      "dialogue": "",
+      "visual_prompt": "chinese comic drama, cinematic medium shot with character blocking, scene: 分镜 1, content: 画面中，# 雨夜来信"
+    },
+    {
+      "shot_id": "S002",
+      "scene": "分镜 2",
+      "camera": "cinematic medium shot with character blocking",
+      "action": "画面中，林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：",
+      "narration": "画面中，林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话：",
+      "dialogue": "",
+      "visual_prompt": "chinese comic drama, cinematic medium shot with character blocking, scene: 分镜 2, content: 画面中，林舟在旧城南街的钟楼下等了三小时，雨水顺着黑伞边缘落成一串细线。午夜十二点，一封没有署名的信从钟楼门缝里滑出来，信纸上只有一句话："
+    },
+    {
+      "shot_id": "S003",
+      "scene": "分镜 2",
+      "camera": "cinematic medium shot with character blocking",
+      "action": "",
+      "narration": "",
+      "dialogue": "别相信明天早上的自己。",
+      "visual_prompt": "chinese comic drama, cinematic medium shot with character blocking, scene: 分镜 2, content: 别相信明天早上的自己。"
+    },
+    {
+      "shot_id": "S004",
+      "scene": "分镜 3",
+      "camera": "cinematic medium shot with character blocking",
+      "action": "画面中，他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说：",
+      "narration": "画面中，他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说：",
+      "dialogue": "",
+      "visual_prompt": "chinese comic drama, cinematic medium shot with character blocking, scene: 分镜 3, content: 画面中，他刚想离开，青梅竹马的苏晴从巷口跑来，手里握着一枚裂开的玉佩。苏晴喘着气说："
+    },
+    {
+      "shot_id": "S005",
+      "scene": "分镜 3",
+      "camera": "cinematic medium shot with character blocking",
+      "action": "",
+      "narration": "",
+      "dialogue": "我在你父亲留下的书房里找到了这个，墙后面还有一扇门。",
+      "visual_prompt": "chinese comic drama, cinematic medium shot with character blocking, scene: 分镜 3, content: 我在你父亲留下的书房里找到了这个，墙后面还有一扇门。"
+    }
+  ],
+  "notices": [
+    "MVP uses deterministic extraction. Connect an LLM provider for production-grade adaptation quality.",
+    "Generated scripts still require human editorial review before commercial production."
+  ]
+}

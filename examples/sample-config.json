@@ -1,0 +1,12 @@
+{
+  "style": "chinese",
+  "target_format": "comic_narration",
+  "dialogue_retention_ratio": 0.8,
+  "narration_pov": "third_person",
+  "storyboard_detail": "medium",
+  "episode_length": "short",
+  "copyright_confirmation": true,
+  "genre": "urban fantasy",
+  "tone": "suspenseful"
+}
+

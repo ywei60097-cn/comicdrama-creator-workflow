@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/comicdrama/workflow-result.schema.json",
+  "title": "WorkflowResult",
+  "type": "object",
+  "required": ["config", "analysis", "simplified_novel", "script", "storyboard", "notices"],
+  "properties": {
+    "config": { "$ref": "workflow-config.schema.json" },
+    "analysis": {
+      "type": "object",
+      "required": ["title", "synopsis", "story_beats", "characters", "elements"],
+      "properties": {
+        "title": { "type": "string" },
+        "synopsis": { "type": "string" },
+        "story_beats": { "type": "array" },
+        "characters": { "type": "array" },
+        "elements": { "type": "array" }
+      }
+    },
+    "simplified_novel": { "type": "string" },
+    "script": { "type": "array" },
+    "storyboard": { "type": "array" },
+    "notices": { "type": "array", "items": { "type": "string" } }
+  }
+}
+
