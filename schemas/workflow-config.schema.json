@@ -23,6 +23,7 @@
         ]
       }
     },
+    "character_reference": { "type": ["string", "null"] },
     "genre": { "type": ["string", "null"] },
     "tone": { "type": ["string", "null"] }
   },

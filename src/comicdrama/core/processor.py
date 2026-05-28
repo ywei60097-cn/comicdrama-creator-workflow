@@ -189,6 +189,14 @@ class ComicDramaProcessor:
                 suggestion="为主要场景补充稳定的视觉锚点，例如时间、天气、光线、空间层次和关键道具位置。",
             ),
         ]
+        if config.character_reference:
+            suggestions.append(
+                AdaptationSuggestion(
+                    category="character",
+                    priority="medium",
+                    suggestion="已检测到人物设定参考，建议在剧本转换阶段用它统一人物称谓、外貌锚点和人物动机。",
+                )
+            )
         if len(analysis.characters) < 2:
             suggestions.append(
                 AdaptationSuggestion(

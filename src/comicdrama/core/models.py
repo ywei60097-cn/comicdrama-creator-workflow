@@ -47,6 +47,7 @@ class WorkflowConfig(BaseModel):
     episode_length: str = "short"
     copyright_confirmation: bool = False
     enabled_features: List[str] = Field(default_factory=lambda: list(DEFAULT_ENABLED_FEATURES))
+    character_reference: Optional[str] = None
     genre: Optional[str] = None
     tone: Optional[str] = None
 

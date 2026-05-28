@@ -39,6 +39,10 @@
             原始小说文本
             <textarea id="sourceText" spellcheck="false"></textarea>
           </label>
+          <label>
+            人物设定参考
+            <textarea id="characterReference" class="compact-textarea" spellcheck="false"></textarea>
+          </label>
           <div class="rights-line">
             <input id="rightsConfirm" type="checkbox" checked />
             <label for="rightsConfirm">确认拥有合法处理或测试授权</label>
@@ -62,6 +66,14 @@
 
         <aside class="settings-pane" aria-label="工作流参数">
           <h2>参数</h2>
+          <section class="preset-grid" aria-label="快捷任务">
+            <button class="preset-button" type="button" data-preset="simplify">小说简炼</button>
+            <button class="preset-button" type="button" data-preset="extract">人物场景提取</button>
+            <button class="preset-button" type="button" data-preset="script">剧本转换</button>
+            <button class="preset-button" type="button" data-preset="batch">批量改名</button>
+            <button class="preset-button" type="button" data-preset="assist">辅助创作</button>
+            <button class="preset-button" type="button" data-preset="all">全流程</button>
+          </section>
           <section class="feature-list" aria-label="功能选择">
             <div class="settings-subhead">功能选择</div>
             <label class="feature-option">

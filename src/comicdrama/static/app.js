@@ -22,6 +22,7 @@ const supportedUploadExtensions = new Set(["txt", "md", "markdown", "pdf", "docx
 const els = {
   title: document.querySelector("#titleInput"),
   source: document.querySelector("#sourceText"),
+  characterReference: document.querySelector("#characterReference"),
   rights: document.querySelector("#rightsConfirm"),
   style: document.querySelector("#styleSelect"),
   format: document.querySelector("#formatSelect"),
@@ -39,6 +40,7 @@ const els = {
   resultBody: document.querySelector("#resultBody"),
   tabs: document.querySelectorAll(".tab"),
   features: document.querySelectorAll('input[name="feature"]'),
+  presets: document.querySelectorAll(".preset-button"),
 };
 
 els.source.value = sampleText;
@@ -111,6 +113,12 @@ els.features.forEach((feature) => {
   });
 });
 
+els.presets.forEach((preset) => {
+  preset.addEventListener("click", () => {
+    applyPreset(preset.dataset.preset);
+  });
+});
+
 els.run.addEventListener("click", async () => {
   await runWorkflow();
 });
@@ -163,6 +171,7 @@ async function runWorkflow() {
           episode_length: "short",
           copyright_confirmation: els.rights.checked,
           enabled_features: enabledFeatures,
+          character_reference: els.characterReference.value.trim() || null,
         },
       }),
     });
@@ -342,6 +351,37 @@ function safeName(value) {
 
 function selectedFeatures() {
   return Array.from(els.features).filter((item) => item.checked).map((item) => item.value);
+}
+
+function applyPreset(preset) {
+  const presets = {
+    simplify: ["simplify"],
+    extract: ["extract_elements"],
+    script: ["simplify", "extract_elements", "convert_script"],
+    batch: ["batch_process"],
+    assist: ["extract_elements", "assist_adaptation"],
+    all: ["simplify", "extract_elements", "convert_script", "batch_process", "assist_adaptation"],
+  };
+  const features = new Set(presets[preset] || presets.all);
+  els.features.forEach((item) => {
+    item.checked = features.has(item.value);
+  });
+  state.enabledFeatures = selectedFeatures();
+  const targetTab = {
+    simplify: "overview",
+    extract: "characters",
+    script: "script",
+    batch: "batch",
+    assist: "assist",
+    all: "overview",
+  }[preset] || "overview";
+  setActiveTab(targetTab);
+}
+
+function setActiveTab(tabName) {
+  state.activeTab = tabName;
+  els.tabs.forEach((item) => item.classList.toggle("active", item.dataset.tab === tabName));
+  render();
 }
 
 function featureChips(features) {
