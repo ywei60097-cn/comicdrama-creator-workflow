@@ -15,7 +15,7 @@ Sample novels, scripts, and cases included with this repository are for feature 
 
 ## Features
 
-- Source import: paste text or upload TXT, Markdown, and selectable-text PDF files.
+- Source import: paste text or upload TXT, Markdown, selectable-text PDF, DOCX, HTML, CSV, JSON, RTF, and optionally XLSX files.
 - Novel simplification: compress long source text while preserving the core plot, conflicts, and relationships.
 - Element extraction: identify candidate characters, locations, props, and story beats.
 - Script conversion: generate comic narration format or Hollywood-style script blocks.
@@ -108,6 +108,8 @@ schemas/       # JSON schemas for enterprise integration contracts
 examples/      # sample input, config, and generated outputs
 docs/          # workflow, API, copyright, and integration guides
 ```
+
+See `docs/source-imports.md` for the full import format matrix and extension plan.
 
 ## Licensing
 

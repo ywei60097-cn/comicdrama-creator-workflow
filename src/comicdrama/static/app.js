@@ -13,7 +13,10 @@ const sampleText = `# 雨夜来信
 const state = {
   activeTab: "overview",
   result: null,
+  sourceFormat: "md",
 };
+
+const supportedUploadExtensions = new Set(["txt", "md", "markdown", "pdf", "docx", "html", "htm", "csv", "json", "rtf", "xlsx"]);
 
 const els = {
   title: document.querySelector("#titleInput"),
@@ -47,6 +50,7 @@ els.loadSample.addEventListener("click", () => {
   els.source.value = sampleText;
   els.file.value = "";
   els.fileMeta.textContent = "已载入示例";
+  state.sourceFormat = "md";
 });
 
 els.upload.addEventListener("click", () => {
@@ -60,18 +64,24 @@ els.file.addEventListener("change", async () => {
     return;
   }
   const extension = file.name.split(".").pop().toLowerCase();
-  if (!["txt", "md", "pdf"].includes(extension)) {
+  if (!supportedUploadExtensions.has(extension)) {
     els.file.value = "";
-    els.fileMeta.textContent = "仅支持 TXT / MD / PDF";
+    els.fileMeta.textContent = "格式不支持";
     setStatus("附件格式不支持", "running");
     return;
   }
   try {
     setStatus("读取附件", "running");
-    const extracted = extension === "pdf" ? await extractServerSide(file) : await extractLocalText(file);
+    const extracted = await extractServerSide(file);
     els.source.value = extracted.text;
     els.title.value = extracted.title;
-    els.fileMeta.textContent = `${file.name} · ${formatBytes(file.size)}${extracted.pages ? ` · ${extracted.pages} 页` : ""}`;
+    state.sourceFormat = extracted.source_format || extension;
+    els.fileMeta.textContent = [
+      file.name,
+      formatBytes(file.size),
+      extracted.pages ? `${extracted.pages} 页` : "",
+      extracted.sheets ? `${extracted.sheets} 个表` : "",
+    ].filter(Boolean).join(" · ");
     state.result = null;
     els.download.disabled = true;
     setStatus(extracted.text.trim() ? "附件已导入" : "需 OCR", extracted.text.trim() ? "done" : "running");
@@ -128,7 +138,7 @@ async function runWorkflow() {
       body: JSON.stringify({
         document: {
           title: els.title.value || "Untitled Novel",
-          source_format: "md",
+          source_format: state.sourceFormat,
           text,
         },
         config: {
@@ -270,13 +280,6 @@ function setStatus(text, className) {
 
 function safeName(value) {
   return value.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/gi, "-").replace(/^-|-$/g, "") || "comicdrama";
-}
-
-async function extractLocalText(file) {
-  return {
-    title: stripExtension(file.name),
-    text: await file.text(),
-  };
 }
 
 async function extractServerSide(file) {

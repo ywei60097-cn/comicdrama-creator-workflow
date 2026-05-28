@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import base64
 import binascii
-from io import BytesIO
 from pathlib import Path
 from typing import List, Optional
 
@@ -11,6 +10,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from comicdrama.core.importers import extract_source_text
 from comicdrama.core.models import NovelAnalysis, TextDocument, WorkflowConfig, WorkflowResult
 from comicdrama.core.processor import ComicDramaProcessor
 
@@ -31,6 +31,7 @@ class FileExtractResponse(BaseModel):
     source_format: str
     text: str
     pages: Optional[int] = None
+    sheets: Optional[int] = None
     notices: List[str] = Field(default_factory=list)
 
 
@@ -57,34 +58,21 @@ def health() -> dict[str, str]:
 
 @app.post("/api/v1/files/extract-text", response_model=FileExtractResponse)
 def extract_text(request: FileExtractRequest) -> FileExtractResponse:
-    suffix = Path(request.filename).suffix.lower()
-    title = Path(request.filename).stem or "Untitled Novel"
     try:
         raw = base64.b64decode(request.content_base64, validate=True)
     except (binascii.Error, ValueError) as exc:
         raise HTTPException(status_code=400, detail="Invalid base64 file payload.") from exc
 
-    if suffix in {".txt", ".md"}:
-        return FileExtractResponse(
-            filename=request.filename,
-            title=title,
-            source_format=suffix.lstrip("."),
-            text=_decode_text(raw),
-        )
-    if suffix == ".pdf":
-        text, pages = _extract_pdf_text(raw)
-        notices = []
-        if not text.strip():
-            notices.append("No selectable text was found. Scanned PDFs require OCR before processing.")
-        return FileExtractResponse(
-            filename=request.filename,
-            title=title,
-            source_format="pdf",
-            text=text,
-            pages=pages,
-            notices=notices,
-        )
-    raise HTTPException(status_code=400, detail="Only TXT, MD, and PDF files are supported.")
+    try:
+        extracted = extract_source_text(request.filename, raw)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Could not extract text from file: {exc}") from exc
+
+    return FileExtractResponse(**extracted.__dict__)
 
 
 @app.post("/api/v1/novel/analyze", response_model=NovelAnalysis)
@@ -116,30 +104,3 @@ def convert_script(request: WorkflowRequest) -> dict[str, object]:
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"title": request.document.title, "script": result.script}
-
-
-def _decode_text(raw: bytes) -> str:
-    for encoding in ("utf-8-sig", "utf-8", "gb18030"):
-        try:
-            return raw.decode(encoding)
-        except UnicodeDecodeError:
-            continue
-    raise HTTPException(status_code=400, detail="Could not decode text file. Use UTF-8 or GB18030.")
-
-
-def _extract_pdf_text(raw: bytes) -> tuple[str, int]:
-    try:
-        from PyPDF2 import PdfReader
-    except ImportError as exc:
-        raise HTTPException(status_code=500, detail="PDF support requires PyPDF2. Install project dependencies first.") from exc
-
-    try:
-        reader = PdfReader(BytesIO(raw))
-        pages = []
-        for index, page in enumerate(reader.pages, start=1):
-            page_text = page.extract_text() or ""
-            if page_text.strip():
-                pages.append(f"## Page {index}\n\n{page_text.strip()}")
-        return "\n\n".join(pages).strip(), len(reader.pages)
-    except Exception as exc:
-        raise HTTPException(status_code=400, detail=f"Could not extract text from PDF: {exc}") from exc

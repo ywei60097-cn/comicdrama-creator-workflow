@@ -38,4 +38,17 @@ All endpoints accept a `WorkflowRequest` object:
 
 Use `schemas/workflow-result.schema.json` as the stable response contract for enterprise adapters.
 
-PDF upload support extracts selectable text from PDF files. Scanned image PDFs need OCR before they can be processed.
+Supported source imports:
+
+- TXT and Markdown
+- Selectable-text PDF
+- DOCX
+- HTML / HTM
+- CSV
+- JSON
+- RTF
+- XLSX when the optional spreadsheet dependency is installed
+
+Scanned image PDFs need OCR before they can be processed. Legacy `.doc` and Apple Pages files should be exported to `.docx` or PDF before import.
+
+See `source-imports.md` for the complete import design and extension plan.
