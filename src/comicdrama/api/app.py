@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from comicdrama.core.models import NovelAnalysis, TextDocument, WorkflowConfig, WorkflowResult
@@ -18,6 +22,14 @@ app = FastAPI(
     description="API for simplifying novels, extracting adaptation elements, and generating comic-drama scripts.",
 )
 processor = ComicDramaProcessor()
+STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.get("/", include_in_schema=False)
+def index() -> FileResponse:
+    return FileResponse(STATIC_DIR / "index.html")
 
 
 @app.get("/health")
@@ -54,4 +66,3 @@ def convert_script(request: WorkflowRequest) -> dict[str, object]:
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"title": request.document.title, "script": result.script}
-

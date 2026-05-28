@@ -3,7 +3,13 @@
 Start the API:
 
 ```bash
-uvicorn comicdrama.api.app:app --reload
+PYTHONPATH=src python3 -m uvicorn comicdrama.api.app:app --reload
+```
+
+The browser workbench is available at:
+
+```text
+http://127.0.0.1:8000/
 ```
 
 Endpoints:
@@ -30,4 +36,3 @@ All endpoints accept a `WorkflowRequest` object:
 ```
 
 Use `schemas/workflow-result.schema.json` as the stable response contract for enterprise adapters.
-

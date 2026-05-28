@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ComicDrama Creator Workflow</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>ComicDrama Creator Workflow</h1>
+          <p>小说到漫剧创作工作台</p>
+        </div>
+        <div class="status" id="status">Ready</div>
+      </header>
+
+      <section class="workspace">
+        <section class="source-pane" aria-label="素材输入">
+          <div class="section-head">
+            <h2>素材</h2>
+            <button class="ghost-button" id="loadSample" type="button">载入示例</button>
+          </div>
+          <label>
+            项目标题
+            <input id="titleInput" type="text" value="雨夜来信" />
+          </label>
+          <label>
+            原始小说文本
+            <textarea id="sourceText" spellcheck="false"></textarea>
+          </label>
+          <div class="rights-line">
+            <input id="rightsConfirm" type="checkbox" checked />
+            <label for="rightsConfirm">确认拥有合法处理或测试授权</label>
+          </div>
+        </section>
+
+        <section class="result-pane" aria-label="生成结果">
+          <nav class="tabs" aria-label="结果类型">
+            <button class="tab active" type="button" data-tab="overview">概览</button>
+            <button class="tab" type="button" data-tab="characters">人物与元素</button>
+            <button class="tab" type="button" data-tab="script">剧本</button>
+            <button class="tab" type="button" data-tab="storyboard">分镜</button>
+            <button class="tab" type="button" data-tab="json">JSON</button>
+          </nav>
+          <div class="result-body" id="resultBody">
+            <div class="empty-state">点击运行后查看精简小说、剧本和分镜结果。</div>
+          </div>
+        </section>
+
+        <aside class="settings-pane" aria-label="工作流参数">
+          <h2>参数</h2>
+          <label>
+            漫剧风格
+            <select id="styleSelect">
+              <option value="chinese">中式</option>
+              <option value="japanese">日式</option>
+              <option value="western">欧美式</option>
+              <option value="custom">自定义</option>
+            </select>
+          </label>
+          <label>
+            剧本格式
+            <select id="formatSelect">
+              <option value="comic_narration">旁白漫剧格式</option>
+              <option value="hollywood">好莱坞格式</option>
+            </select>
+          </label>
+          <label>
+            旁白视角
+            <select id="povSelect">
+              <option value="third_person">第三人称</option>
+              <option value="first_person">第一人称</option>
+            </select>
+          </label>
+          <label>
+            分镜精细度
+            <select id="detailSelect">
+              <option value="low">低</option>
+              <option value="medium" selected>中</option>
+              <option value="high">高</option>
+            </select>
+          </label>
+          <label>
+            对话保留比例 <span id="ratioValue">80%</span>
+            <input id="ratioInput" type="range" min="0" max="100" value="80" />
+          </label>
+          <button class="primary-button" id="runButton" type="button">运行工作流</button>
+          <button class="secondary-button" id="downloadButton" type="button" disabled>下载 JSON</button>
+        </aside>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

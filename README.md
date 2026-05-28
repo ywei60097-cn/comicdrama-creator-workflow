@@ -41,10 +41,10 @@ comicdrama run examples/sample-novel.md \
 Run the API:
 
 ```bash
-uvicorn comicdrama.api.app:app --reload
+PYTHONPATH=src python3 -m uvicorn comicdrama.api.app:app --reload
 ```
 
-Open `http://127.0.0.1:8000/docs` for the interactive API console.
+Open `http://127.0.0.1:8000/` for the browser workbench, or `http://127.0.0.1:8000/docs` for the interactive API console.
 
 ## CLI Examples
 
@@ -114,4 +114,3 @@ Code is licensed under Apache-2.0.
 Sample works, original novels, scripts, screenplay excerpts, and case materials are all rights reserved unless a separate license is provided.
 
 See `LICENSE` and `NOTICE.md`.
-
