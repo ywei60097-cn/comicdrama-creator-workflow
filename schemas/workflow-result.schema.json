@@ -20,7 +20,8 @@
     "simplified_novel": { "type": "string" },
     "script": { "type": "array" },
     "storyboard": { "type": "array" },
+    "batch_operations": { "type": "array" },
+    "adaptation_suggestions": { "type": "array" },
     "notices": { "type": "array", "items": { "type": "string" } }
   }
 }
-

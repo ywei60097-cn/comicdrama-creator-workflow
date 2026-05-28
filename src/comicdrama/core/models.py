@@ -29,6 +29,15 @@ class DetailLevel(str, Enum):
     high = "high"
 
 
+DEFAULT_ENABLED_FEATURES = [
+    "simplify",
+    "extract_elements",
+    "convert_script",
+    "batch_process",
+    "assist_adaptation",
+]
+
+
 class WorkflowConfig(BaseModel):
     style: ComicStyle = ComicStyle.chinese
     target_format: ScriptFormat = ScriptFormat.comic_narration
@@ -37,6 +46,7 @@ class WorkflowConfig(BaseModel):
     storyboard_detail: DetailLevel = DetailLevel.medium
     episode_length: str = "short"
     copyright_confirmation: bool = False
+    enabled_features: List[str] = Field(default_factory=lambda: list(DEFAULT_ENABLED_FEATURES))
     genre: Optional[str] = None
     tone: Optional[str] = None
 
@@ -83,6 +93,18 @@ class StoryboardShot(BaseModel):
     visual_prompt: str = ""
 
 
+class BatchOperation(BaseModel):
+    action: str
+    status: str
+    detail: str
+
+
+class AdaptationSuggestion(BaseModel):
+    category: str
+    priority: str
+    suggestion: str
+
+
 class NovelAnalysis(BaseModel):
     title: str
     synopsis: str
@@ -97,5 +119,6 @@ class WorkflowResult(BaseModel):
     simplified_novel: str
     script: List[ScriptBlock]
     storyboard: List[StoryboardShot]
+    batch_operations: List[BatchOperation] = Field(default_factory=list)
+    adaptation_suggestions: List[AdaptationSuggestion] = Field(default_factory=list)
     notices: List[str] = Field(default_factory=list)
-

@@ -51,6 +51,8 @@
             <button class="tab" type="button" data-tab="characters">人物与元素</button>
             <button class="tab" type="button" data-tab="script">剧本</button>
             <button class="tab" type="button" data-tab="storyboard">分镜</button>
+            <button class="tab" type="button" data-tab="batch">批量</button>
+            <button class="tab" type="button" data-tab="assist">辅创</button>
             <button class="tab" type="button" data-tab="json">JSON</button>
           </nav>
           <div class="result-body" id="resultBody">
@@ -60,6 +62,29 @@
 
         <aside class="settings-pane" aria-label="工作流参数">
           <h2>参数</h2>
+          <section class="feature-list" aria-label="功能选择">
+            <div class="settings-subhead">功能选择</div>
+            <label class="feature-option">
+              <input type="checkbox" name="feature" value="simplify" checked />
+              <span>小说精炼</span>
+            </label>
+            <label class="feature-option">
+              <input type="checkbox" name="feature" value="extract_elements" checked />
+              <span>人物场景提取</span>
+            </label>
+            <label class="feature-option">
+              <input type="checkbox" name="feature" value="convert_script" checked />
+              <span>剧本格式转换</span>
+            </label>
+            <label class="feature-option">
+              <input type="checkbox" name="feature" value="batch_process" checked />
+              <span>批量内容处理</span>
+            </label>
+            <label class="feature-option">
+              <input type="checkbox" name="feature" value="assist_adaptation" checked />
+              <span>小说辅助创作</span>
+            </label>
+          </section>
           <label>
             漫剧风格
             <select id="styleSelect">

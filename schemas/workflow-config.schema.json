@@ -11,10 +11,21 @@
     "storyboard_detail": { "enum": ["low", "medium", "high"] },
     "episode_length": { "type": "string" },
     "copyright_confirmation": { "type": "boolean" },
+    "enabled_features": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "simplify",
+          "extract_elements",
+          "convert_script",
+          "batch_process",
+          "assist_adaptation"
+        ]
+      }
+    },
     "genre": { "type": ["string", "null"] },
     "tone": { "type": ["string", "null"] }
   },
   "required": ["copyright_confirmation"],
   "additionalProperties": false
 }
-

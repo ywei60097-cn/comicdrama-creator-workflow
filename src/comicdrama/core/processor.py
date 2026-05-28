@@ -5,7 +5,10 @@ from collections import Counter
 from typing import Iterable, List
 
 from .models import (
+    AdaptationSuggestion,
+    BatchOperation,
     Character,
+    DEFAULT_ENABLED_FEATURES,
     DetailLevel,
     NovelAnalysis,
     SceneElement,
@@ -32,10 +35,14 @@ class ComicDramaProcessor:
             raise ValueError("copyright_confirmation must be true before processing source text.")
 
         cleaned = clean_text(document.text)
+        enabled = set(config.enabled_features or DEFAULT_ENABLED_FEATURES)
         analysis = self.analyze(TextDocument(title=document.title, source_format=document.source_format, text=cleaned))
-        simplified = self.simplify(cleaned, config)
-        script = self.convert_to_script(simplified, analysis, config)
-        storyboard = self.generate_storyboard(script, analysis, config)
+        simplified_for_work = self.simplify(cleaned, config)
+        simplified = simplified_for_work if "simplify" in enabled else ""
+        script = self.convert_to_script(simplified_for_work, analysis, config) if "convert_script" in enabled else []
+        storyboard = self.generate_storyboard(script, analysis, config) if script else []
+        batch_operations = self.plan_batch_operations(document, cleaned) if "batch_process" in enabled else []
+        adaptation_suggestions = self.suggest_adaptation(cleaned, analysis, config) if "assist_adaptation" in enabled else []
         notices = [
             "MVP uses deterministic extraction. Connect an LLM provider for production-grade adaptation quality.",
             "Generated scripts still require human editorial review before commercial production.",
@@ -46,6 +53,8 @@ class ComicDramaProcessor:
             simplified_novel=simplified,
             script=script,
             storyboard=storyboard,
+            batch_operations=batch_operations,
+            adaptation_suggestions=adaptation_suggestions,
             notices=notices,
         )
 
@@ -139,6 +148,81 @@ class ComicDramaProcessor:
             )
         return shots
 
+    def plan_batch_operations(self, document: TextDocument, text: str) -> List[BatchOperation]:
+        paragraphs = split_paragraphs(text)
+        normalized_title = _normalize_filename(document.title)
+        dialogue_count = sum(1 for paragraph in paragraphs if _is_dialogue_heavy(paragraph))
+        return [
+            BatchOperation(
+                action="rename",
+                status="preview",
+                detail=f"Suggested normalized project filename: {normalized_title}.{document.source_format or 'txt'}",
+            ),
+            BatchOperation(
+                action="format_unify",
+                status="preview",
+                detail=f"Detected {len(paragraphs)} paragraphs and {dialogue_count} dialogue-heavy paragraphs; output can be normalized to Markdown.",
+            ),
+            BatchOperation(
+                action="export_bundle",
+                status="preview",
+                detail="Recommended export set: simplified_novel.md, elements.json, script.md, storyboard.csv.",
+            ),
+        ]
+
+    def suggest_adaptation(
+        self,
+        text: str,
+        analysis: NovelAnalysis,
+        config: WorkflowConfig,
+    ) -> List[AdaptationSuggestion]:
+        paragraphs = split_paragraphs(text)
+        suggestions = [
+            AdaptationSuggestion(
+                category="structure",
+                priority="high",
+                suggestion="把核心冲突前置到开篇 3-5 个分镜内，先给观众一个明确悬念或危机。",
+            ),
+            AdaptationSuggestion(
+                category="visualization",
+                priority="medium",
+                suggestion="为主要场景补充稳定的视觉锚点，例如时间、天气、光线、空间层次和关键道具位置。",
+            ),
+        ]
+        if len(analysis.characters) < 2:
+            suggestions.append(
+                AdaptationSuggestion(
+                    category="character",
+                    priority="high",
+                    suggestion="当前可识别人物偏少，建议补充主角、对手或关键关系人物的身份与动机。",
+                )
+            )
+        if len(analysis.elements) < 4:
+            suggestions.append(
+                AdaptationSuggestion(
+                    category="worldbuilding",
+                    priority="medium",
+                    suggestion="当前场景和道具信息偏少，建议补充可重复出现的地点、物件和规则设定。",
+                )
+            )
+        if config.genre and any(keyword in config.genre.lower() for keyword in ("fantasy", "sci", "玄幻", "科幻")):
+            suggestions.append(
+                AdaptationSuggestion(
+                    category="worldbuilding",
+                    priority="high",
+                    suggestion="玄幻或科幻题材建议单独整理世界观规则，避免分镜阶段出现设定断裂。",
+                )
+            )
+        if len(paragraphs) > 20:
+            suggestions.append(
+                AdaptationSuggestion(
+                    category="pacing",
+                    priority="medium",
+                    suggestion="长文本建议先拆成分集大纲，再逐集生成剧本，避免单次输出节奏过满。",
+                )
+            )
+        return suggestions
+
 
 def _summarize_paragraph(paragraph: str, limit: int = 180) -> str:
     paragraph = re.sub(r"\s+", " ", paragraph).strip()
@@ -146,6 +230,11 @@ def _summarize_paragraph(paragraph: str, limit: int = 180) -> str:
         return paragraph
     sentence = split_sentences(paragraph)[0] if split_sentences(paragraph) else paragraph
     return sentence[:limit].rstrip("，,。") + "..."
+
+
+def _normalize_filename(value: str) -> str:
+    normalized = re.sub(r"[^\w\u4e00-\u9fa5]+", "-", value.strip().lower())
+    return normalized.strip("-") or "comicdrama-project"
 
 
 def _extract_characters(text: str) -> List[Character]:

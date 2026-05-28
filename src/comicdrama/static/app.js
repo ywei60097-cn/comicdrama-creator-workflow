@@ -14,6 +14,7 @@ const state = {
   activeTab: "overview",
   result: null,
   sourceFormat: "md",
+  enabledFeatures: ["simplify", "extract_elements", "convert_script", "batch_process", "assist_adaptation"],
 };
 
 const supportedUploadExtensions = new Set(["txt", "md", "markdown", "pdf", "docx", "html", "htm", "csv", "json", "rtf", "xlsx"]);
@@ -37,6 +38,7 @@ const els = {
   status: document.querySelector("#status"),
   resultBody: document.querySelector("#resultBody"),
   tabs: document.querySelectorAll(".tab"),
+  features: document.querySelectorAll('input[name="feature"]'),
 };
 
 els.source.value = sampleText;
@@ -103,6 +105,12 @@ els.tabs.forEach((tab) => {
   });
 });
 
+els.features.forEach((feature) => {
+  feature.addEventListener("change", () => {
+    state.enabledFeatures = selectedFeatures();
+  });
+});
+
 els.run.addEventListener("click", async () => {
   await runWorkflow();
 });
@@ -128,6 +136,11 @@ async function runWorkflow() {
     setStatus("需确认授权", "running");
     return;
   }
+  const enabledFeatures = selectedFeatures();
+  if (!enabledFeatures.length) {
+    setStatus("请选择功能", "running");
+    return;
+  }
 
   setStatus("Running", "running");
   els.run.disabled = true;
@@ -149,6 +162,7 @@ async function runWorkflow() {
           storyboard_detail: els.detail.value,
           episode_length: "short",
           copyright_confirmation: els.rights.checked,
+          enabled_features: enabledFeatures,
         },
       }),
     });
@@ -178,6 +192,8 @@ function render() {
     characters: renderCharacters,
     script: renderScript,
     storyboard: renderStoryboard,
+    batch: renderBatch,
+    assist: renderAssist,
     json: renderJson,
   };
   els.resultBody.innerHTML = renderers[state.activeTab]();
@@ -186,6 +202,9 @@ function render() {
 function renderOverview() {
   const result = state.result;
   return `
+    <div class="feature-chips">
+      ${featureChips(result.config.enabled_features)}
+    </div>
     <div class="summary-grid">
       <div class="metric"><strong>${result.analysis.story_beats.length}</strong><span>剧情节拍</span></div>
       <div class="metric"><strong>${result.analysis.characters.length}</strong><span>人物</span></div>
@@ -194,8 +213,7 @@ function renderOverview() {
     <div class="prose">
       <h3>故事梗概</h3>
       ${paragraphs(result.analysis.synopsis)}
-      <h3>精简小说</h3>
-      ${paragraphs(result.simplified_novel)}
+      ${result.simplified_novel ? `<h3>精简小说</h3>${paragraphs(result.simplified_novel)}` : ""}
       <h3>提示</h3>
       <ul>${result.notices.map((notice) => `<li>${escapeHtml(notice)}</li>`).join("")}</ul>
     </div>
@@ -229,6 +247,9 @@ function renderCharacters() {
 }
 
 function renderScript() {
+  if (!state.result.script.length) {
+    return '<div class="empty-state">未选择剧本格式转换，或当前素材没有生成剧本。</div>';
+  }
   return state.result.script.map((block) => `
     <div class="script-block">
       <strong>${escapeHtml(block.block_type)}</strong>
@@ -239,6 +260,9 @@ function renderScript() {
 }
 
 function renderStoryboard() {
+  if (!state.result.storyboard.length) {
+    return '<div class="empty-state">需要选择剧本格式转换后才会生成分镜草案。</div>';
+  }
   return `
     <table>
       <thead>
@@ -265,6 +289,40 @@ function renderStoryboard() {
   `;
 }
 
+function renderBatch() {
+  const items = state.result.batch_operations || [];
+  if (!items.length) {
+    return '<div class="empty-state">未选择批量内容处理。</div>';
+  }
+  return `
+    <div class="item-list">
+      ${items.map((item) => `
+        <article class="item">
+          <div class="item-title">${escapeHtml(item.action)} · ${escapeHtml(item.status)}</div>
+          <div class="muted">${escapeHtml(item.detail)}</div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderAssist() {
+  const items = state.result.adaptation_suggestions || [];
+  if (!items.length) {
+    return '<div class="empty-state">未选择小说辅助创作。</div>';
+  }
+  return `
+    <div class="item-list">
+      ${items.map((item) => `
+        <article class="item">
+          <div class="item-title">${escapeHtml(item.category)} · ${escapeHtml(item.priority)}</div>
+          <div class="muted">${escapeHtml(item.suggestion)}</div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
 function renderJson() {
   return `<pre>${escapeHtml(JSON.stringify(state.result, null, 2))}</pre>`;
 }
@@ -280,6 +338,21 @@ function setStatus(text, className) {
 
 function safeName(value) {
   return value.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/gi, "-").replace(/^-|-$/g, "") || "comicdrama";
+}
+
+function selectedFeatures() {
+  return Array.from(els.features).filter((item) => item.checked).map((item) => item.value);
+}
+
+function featureChips(features) {
+  const labels = {
+    simplify: "小说精炼",
+    extract_elements: "人物场景提取",
+    convert_script: "剧本格式转换",
+    batch_process: "批量内容处理",
+    assist_adaptation: "小说辅助创作",
+  };
+  return (features || []).map((feature) => `<span class="chip">${escapeHtml(labels[feature] || feature)}</span>`).join("");
 }
 
 async function extractServerSide(file) {

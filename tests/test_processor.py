@@ -29,4 +29,19 @@ def test_workflow_generates_script_and_storyboard():
     assert result.simplified_novel
     assert result.script
     assert result.storyboard
+    assert result.batch_operations
+    assert result.adaptation_suggestions
 
+
+def test_workflow_respects_selected_features():
+    processor = ComicDramaProcessor()
+    document = TextDocument(title="Demo", text="林舟在旧城南街等雨停。\n\n苏晴说：“我们还有六个小时。”")
+    config = WorkflowConfig(copyright_confirmation=True, enabled_features=["simplify", "assist_adaptation"])
+
+    result = processor.run(document, config)
+
+    assert result.simplified_novel
+    assert not result.script
+    assert not result.storyboard
+    assert not result.batch_operations
+    assert result.adaptation_suggestions

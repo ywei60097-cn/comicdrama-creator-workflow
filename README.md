@@ -20,6 +20,7 @@ Sample novels, scripts, and cases included with this repository are for feature 
 - Element extraction: identify candidate characters, locations, props, and story beats.
 - Script conversion: generate comic narration format or Hollywood-style script blocks.
 - Storyboard draft: turn script blocks into shot rows with visual prompts.
+- Selectable features: run only simplification, extraction, script conversion, batch previews, or adaptation assistance.
 - Batch-friendly CLI: run the workflow from shell scripts or CI jobs.
 - Enterprise API: FastAPI endpoints for workflow orchestration and platform embedding.
 - Prompt templates and JSON schemas: keep prompts and integration contracts editable outside source code.

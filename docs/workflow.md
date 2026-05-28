@@ -9,5 +9,12 @@ The MVP workflow has six stages.
 5. Convert the draft into comic narration or Hollywood-style script blocks.
 6. Generate storyboard rows and export JSON or Markdown.
 
-For production use, connect an LLM provider at the processor boundary. The deterministic MVP is intentionally conservative and exists to prove the integration contract.
+The browser workbench exposes five selectable features:
 
+- Novel simplification.
+- Character, scene, and prop extraction.
+- Script format conversion.
+- Batch content processing previews.
+- Novel adaptation assistance.
+
+For production use, connect an LLM provider at the processor boundary. The deterministic MVP is intentionally conservative and exists to prove the integration contract.
