@@ -16,7 +16,8 @@ keywords = ["comic-drama", "novel-adaptation", "screenwriting", "workflow", "ai"
 dependencies = [
   "pydantic>=2.0",
   "fastapi>=0.100",
-  "uvicorn>=0.20"
+  "uvicorn>=0.20",
+  "PyPDF2>=3.0"
 ]
 
 [project.optional-dependencies]
@@ -27,4 +28,3 @@ comicdrama = "comicdrama.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-

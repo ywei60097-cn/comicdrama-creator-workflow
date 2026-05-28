@@ -15,6 +15,7 @@ http://127.0.0.1:8000/
 Endpoints:
 
 - `GET /health`
+- `POST /api/v1/files/extract-text`
 - `POST /api/v1/novel/analyze`
 - `POST /api/v1/novel/simplify`
 - `POST /api/v1/script/convert`
@@ -36,3 +37,5 @@ All endpoints accept a `WorkflowRequest` object:
 ```
 
 Use `schemas/workflow-result.schema.json` as the stable response contract for enterprise adapters.
+
+PDF upload support extracts selectable text from PDF files. Scanned image PDFs need OCR before they can be processed.

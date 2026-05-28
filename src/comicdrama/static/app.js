@@ -60,21 +60,25 @@ els.file.addEventListener("change", async () => {
     return;
   }
   const extension = file.name.split(".").pop().toLowerCase();
-  if (!["txt", "md"].includes(extension)) {
+  if (!["txt", "md", "pdf"].includes(extension)) {
     els.file.value = "";
-    els.fileMeta.textContent = "仅支持 TXT / MD";
+    els.fileMeta.textContent = "仅支持 TXT / MD / PDF";
     setStatus("附件格式不支持", "running");
     return;
   }
   try {
-    const text = await file.text();
-    els.source.value = text;
-    els.title.value = stripExtension(file.name);
-    els.fileMeta.textContent = `${file.name} · ${formatBytes(file.size)}`;
+    setStatus("读取附件", "running");
+    const extracted = extension === "pdf" ? await extractServerSide(file) : await extractLocalText(file);
+    els.source.value = extracted.text;
+    els.title.value = extracted.title;
+    els.fileMeta.textContent = `${file.name} · ${formatBytes(file.size)}${extracted.pages ? ` · ${extracted.pages} 页` : ""}`;
     state.result = null;
     els.download.disabled = true;
-    setStatus("附件已导入", "done");
+    setStatus(extracted.text.trim() ? "附件已导入" : "需 OCR", extracted.text.trim() ? "done" : "running");
     render();
+    if (extracted.notices && extracted.notices.length) {
+      els.resultBody.innerHTML = `<div class="empty-state">${escapeHtml(extracted.notices.join(" "))}</div>`;
+    }
   } catch (error) {
     els.fileMeta.textContent = "附件读取失败";
     setStatus("读取失败", "running");
@@ -266,6 +270,41 @@ function setStatus(text, className) {
 
 function safeName(value) {
   return value.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/gi, "-").replace(/^-|-$/g, "") || "comicdrama";
+}
+
+async function extractLocalText(file) {
+  return {
+    title: stripExtension(file.name),
+    text: await file.text(),
+  };
+}
+
+async function extractServerSide(file) {
+  const response = await fetch("/api/v1/files/extract-text", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      filename: file.name,
+      content_base64: await fileToBase64(file),
+    }),
+  });
+  if (!response.ok) {
+    const detail = await response.json().catch(() => ({}));
+    throw new Error(detail.detail || `HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const value = String(reader.result || "");
+      resolve(value.includes(",") ? value.split(",")[1] : value);
+    };
+    reader.onerror = () => reject(reader.error || new Error("Could not read file."));
+    reader.readAsDataURL(file);
+  });
 }
 
 function stripExtension(name) {

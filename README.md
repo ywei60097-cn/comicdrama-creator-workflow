@@ -15,6 +15,7 @@ Sample novels, scripts, and cases included with this repository are for feature 
 
 ## Features
 
+- Source import: paste text or upload TXT, Markdown, and selectable-text PDF files.
 - Novel simplification: compress long source text while preserving the core plot, conflicts, and relationships.
 - Element extraction: identify candidate characters, locations, props, and story beats.
 - Script conversion: generate comic narration format or Hollywood-style script blocks.
@@ -57,6 +58,7 @@ comicdrama script examples/sample-novel.md --confirm-rights --target-format holl
 ## API Endpoints
 
 - `GET /health`
+- `POST /api/v1/files/extract-text`
 - `POST /api/v1/novel/analyze`
 - `POST /api/v1/novel/simplify`
 - `POST /api/v1/script/convert`
