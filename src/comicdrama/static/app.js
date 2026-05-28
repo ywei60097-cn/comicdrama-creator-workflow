@@ -37,9 +37,10 @@ const els = {
   download: document.querySelector("#downloadButton"),
   loadSample: document.querySelector("#loadSample"),
   status: document.querySelector("#status"),
+  paramHint: document.querySelector("#paramHint"),
+  params: document.querySelectorAll("[data-param]"),
   resultBody: document.querySelector("#resultBody"),
   tabs: document.querySelectorAll(".tab"),
-  features: document.querySelectorAll('input[name="feature"]'),
   modes: document.querySelectorAll(".mode-button"),
 };
 
@@ -104,12 +105,6 @@ els.tabs.forEach((tab) => {
     state.activeTab = tab.dataset.tab;
     els.tabs.forEach((item) => item.classList.toggle("active", item === tab));
     render();
-  });
-});
-
-els.features.forEach((feature) => {
-  feature.addEventListener("change", () => {
-    state.enabledFeatures = selectedFeatures();
   });
 });
 
@@ -351,7 +346,7 @@ function safeName(value) {
 }
 
 function selectedFeatures() {
-  return Array.from(els.features).filter((item) => item.checked).map((item) => item.value);
+  return state.enabledFeatures;
 }
 
 function applyPreset(preset) {
@@ -363,11 +358,8 @@ function applyPreset(preset) {
     assist: ["extract_elements", "assist_adaptation"],
     all: ["simplify", "extract_elements", "convert_script", "batch_process", "assist_adaptation"],
   };
-  const features = new Set(presets[preset] || presets.all);
-  els.features.forEach((item) => {
-    item.checked = features.has(item.value);
-  });
-  state.enabledFeatures = selectedFeatures();
+  state.enabledFeatures = presets[preset] || presets.all;
+  updateVisibleParams(preset);
   const targetTab = {
     simplify: "overview",
     extract: "characters",
@@ -377,6 +369,21 @@ function applyPreset(preset) {
     all: "overview",
   }[preset] || "overview";
   setActiveTab(targetTab);
+}
+
+function updateVisibleParams(preset) {
+  const visible = {
+    all: ["style", "script", "storyboard", "ratio"],
+    simplify: ["ratio"],
+    extract: [],
+    script: ["style", "script", "storyboard", "ratio"],
+    batch: [],
+    assist: ["style"],
+  }[preset] || ["style", "script", "storyboard", "ratio"];
+  els.params.forEach((param) => {
+    param.classList.toggle("hidden", !visible.includes(param.dataset.param));
+  });
+  els.paramHint.classList.toggle("hidden", visible.length > 0);
 }
 
 function setActiveTab(tabName) {
@@ -442,3 +449,5 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+updateVisibleParams("all");

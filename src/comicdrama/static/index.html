@@ -95,32 +95,8 @@
               </button>
             </div>
           </section>
-          <details class="advanced-options">
-            <summary>高级自定义</summary>
-            <section class="feature-list" aria-label="功能选择">
-              <label class="feature-option">
-                <input type="checkbox" name="feature" value="simplify" checked />
-                <span>小说精炼</span>
-              </label>
-              <label class="feature-option">
-                <input type="checkbox" name="feature" value="extract_elements" checked />
-                <span>人物场景提取</span>
-              </label>
-              <label class="feature-option">
-                <input type="checkbox" name="feature" value="convert_script" checked />
-                <span>剧本格式转换</span>
-              </label>
-              <label class="feature-option">
-                <input type="checkbox" name="feature" value="batch_process" checked />
-                <span>批量内容处理</span>
-              </label>
-              <label class="feature-option">
-                <input type="checkbox" name="feature" value="assist_adaptation" checked />
-                <span>小说辅助创作</span>
-              </label>
-            </section>
-          </details>
-          <label>
+          <div class="param-hint hidden" id="paramHint">当前任务无需额外参数。</div>
+          <label data-param="style">
             漫剧风格
             <select id="styleSelect">
               <option value="chinese">中式</option>
@@ -129,21 +105,21 @@
               <option value="custom">自定义</option>
             </select>
           </label>
-          <label>
+          <label data-param="script">
             剧本格式
             <select id="formatSelect">
               <option value="comic_narration">旁白漫剧格式</option>
               <option value="hollywood">好莱坞格式</option>
             </select>
           </label>
-          <label>
+          <label data-param="script">
             旁白视角
             <select id="povSelect">
               <option value="third_person">第三人称</option>
               <option value="first_person">第一人称</option>
             </select>
           </label>
-          <label>
+          <label data-param="storyboard">
             分镜精细度
             <select id="detailSelect">
               <option value="low">低</option>
@@ -151,7 +127,7 @@
               <option value="high">高</option>
             </select>
           </label>
-          <label>
+          <label data-param="ratio">
             对话保留比例 <span id="ratioValue">80%</span>
             <input id="ratioInput" type="range" min="0" max="100" value="80" />
           </label>

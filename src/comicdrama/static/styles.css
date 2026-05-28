@@ -308,51 +308,20 @@ textarea:focus {
   color: var(--accent-strong);
 }
 
-.advanced-options {
+.param-hint {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--surface-strong);
-}
-
-.advanced-options summary {
-  cursor: pointer;
-  padding: 10px 12px;
   color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
 }
 
-.advanced-options .feature-list {
-  padding: 0 10px 10px;
-}
-
-.feature-list {
-  display: grid;
-  gap: 8px;
-}
-
-.feature-option {
-  min-height: 34px;
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr);
-  align-items: center;
-  gap: 8px;
-  padding: 7px 9px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #fff;
-  color: var(--ink);
-}
-
-.feature-option input {
-  width: 18px;
-  height: 18px;
-}
-
-.feature-option span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.hidden {
+  display: none !important;
 }
 
 .primary-button,
