@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import re
+import json
 from collections import Counter
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
+from .llm import LLMClient, LLMError, load_prompt
 from .models import (
     AdaptationSuggestion,
     BatchOperation,
@@ -30,10 +32,15 @@ PROP_HINTS = ("放映机", "钥匙", "卷轴", "玉佩", "芯片", "剑", "刀",
 class ComicDramaProcessor:
     """Rule-based MVP processor with clean extension points for LLM providers."""
 
+    def __init__(self, llm_client: Optional[LLMClient] = None):
+        self.llm_client = llm_client if llm_client is not None else LLMClient.from_env()
+        self._llm_warnings: List[str] = []
+
     def run(self, document: TextDocument, config: WorkflowConfig) -> WorkflowResult:
         if not config.copyright_confirmation:
             raise ValueError("copyright_confirmation must be true before processing source text.")
 
+        self._llm_warnings = []
         cleaned = clean_text(document.text)
         enabled = set(config.enabled_features or DEFAULT_ENABLED_FEATURES)
         analysis = self.analyze(TextDocument(title=document.title, source_format=document.source_format, text=cleaned))
@@ -43,10 +50,13 @@ class ComicDramaProcessor:
         storyboard = self.generate_storyboard(script, analysis, config) if script else []
         batch_operations = self.plan_batch_operations(document, cleaned) if "batch_process" in enabled else []
         adaptation_suggestions = self.suggest_adaptation(cleaned, analysis, config) if "assist_adaptation" in enabled else []
-        notices = [
-            "MVP uses deterministic extraction. Connect an LLM provider for production-grade adaptation quality.",
-            "Generated scripts still require human editorial review before commercial production.",
-        ]
+        notices = []
+        if self.llm_client:
+            notices.append("LLM provider enabled for structured analysis and storyboard generation.")
+        else:
+            notices.append("MVP uses deterministic extraction. Configure an LLM provider for production-grade adaptation quality.")
+        notices.extend(self._llm_warnings)
+        notices.append("Generated scripts still require human editorial review before commercial production.")
         return WorkflowResult(
             config=config,
             analysis=analysis,
@@ -59,6 +69,12 @@ class ComicDramaProcessor:
         )
 
     def analyze(self, document: TextDocument) -> NovelAnalysis:
+        if self.llm_client:
+            try:
+                return self._analyze_with_llm(document)
+            except LLMError as exc:
+                self._llm_warnings.append(f"LLM analysis failed; used deterministic fallback. {exc}")
+
         paragraphs = [paragraph for paragraph in split_paragraphs(document.text) if not paragraph.lstrip().startswith("#")]
         sentences = split_sentences(document.text)
         beats = [
@@ -121,6 +137,13 @@ class ComicDramaProcessor:
         analysis: NovelAnalysis,
         config: WorkflowConfig,
     ) -> List[StoryboardShot]:
+        script_blocks = list(script)
+        if self.llm_client:
+            try:
+                return self._storyboard_with_llm(script_blocks, analysis, config)
+            except LLMError as exc:
+                self._llm_warnings.append(f"LLM storyboard failed; used deterministic fallback. {exc}")
+
         detail = {
             DetailLevel.low: "medium shot",
             DetailLevel.medium: "cinematic medium shot with character blocking",
@@ -128,7 +151,7 @@ class ComicDramaProcessor:
         }[config.storyboard_detail]
         shots: List[StoryboardShot] = []
         current_scene = analysis.elements[0].name if analysis.elements else "主场景"
-        for index, block in enumerate(script, start=1):
+        for index, block in enumerate(script_blocks, start=1):
             if block.block_type in {"scene_heading", "panel"}:
                 current_scene = block.content
                 continue
@@ -147,6 +170,47 @@ class ComicDramaProcessor:
                 )
             )
         return shots
+
+    def _analyze_with_llm(self, document: TextDocument) -> NovelAnalysis:
+        payload = self.llm_client.structured_json(
+            system_prompt=load_prompt("extract-elements.md"),
+            user_prompt=(
+                f"作品标题：{document.title}\n"
+                f"来源格式：{document.source_format}\n\n"
+                "请提取人物、场景/道具和剧情节拍。注意：宁可少而准，不要把明显不是人的短语放入 characters。\n\n"
+                f"原文：\n{_limit_text(document.text, 24000)}"
+            ),
+            schema_name="comicdrama_analysis",
+            schema=_analysis_schema(),
+        )
+        return NovelAnalysis(
+            title=document.title,
+            synopsis=str(payload.get("synopsis", "")).strip() or "No synopsis generated.",
+            characters=[Character.model_validate(item) for item in payload.get("characters", [])],
+            elements=[SceneElement.model_validate(item) for item in payload.get("elements", [])],
+            story_beats=[StoryBeat.model_validate(item) for item in payload.get("story_beats", [])],
+        )
+
+    def _storyboard_with_llm(
+        self,
+        script: List[ScriptBlock],
+        analysis: NovelAnalysis,
+        config: WorkflowConfig,
+    ) -> List[StoryboardShot]:
+        payload = self.llm_client.structured_json(
+            system_prompt=load_prompt("storyboard.md"),
+            user_prompt=(
+                f"分镜精细度：{config.storyboard_detail.value}\n"
+                f"漫剧风格：{config.style.value}\n"
+                f"作品梗概：{analysis.synopsis}\n\n"
+                f"人物：{_to_json([item.model_dump() for item in analysis.characters])}\n\n"
+                f"场景与道具：{_to_json([item.model_dump() for item in analysis.elements])}\n\n"
+                f"剧本块：{_to_json([item.model_dump() for item in script])}"
+            ),
+            schema_name="comicdrama_storyboard",
+            schema=_storyboard_schema(),
+        )
+        return [StoryboardShot.model_validate(item) for item in payload.get("storyboard", [])]
 
     def plan_batch_operations(self, document: TextDocument, text: str) -> List[BatchOperation]:
         paragraphs = split_paragraphs(text)
@@ -393,3 +457,127 @@ def _paragraph_to_hollywood_blocks(paragraph: str) -> List[ScriptBlock]:
         blocks.append(ScriptBlock(block_type="action", content=action))
     blocks.extend(_extract_dialogue_blocks(paragraph))
     return blocks
+
+
+def _limit_text(text: str, limit: int) -> str:
+    if len(text) <= limit:
+        return text
+    return text[:limit].rstrip() + "\n\n[TRUNCATED_FOR_MODEL_CONTEXT]"
+
+
+def _to_json(value: object) -> str:
+    return json.dumps(value, ensure_ascii=False, indent=2)
+
+
+def _analysis_schema() -> dict:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["synopsis", "characters", "elements", "story_beats"],
+        "properties": {
+            "synopsis": {"type": "string"},
+            "characters": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": [
+                        "name",
+                        "role",
+                        "first_seen",
+                        "traits",
+                        "visual_notes",
+                        "relationship_notes",
+                        "evidence",
+                        "confidence",
+                        "needs_review",
+                    ],
+                    "properties": {
+                        "name": {"type": "string"},
+                        "role": {"type": "string"},
+                        "first_seen": {"type": "string"},
+                        "traits": {"type": "array", "items": {"type": "string"}},
+                        "visual_notes": {"type": "array", "items": {"type": "string"}},
+                        "relationship_notes": {"type": "string"},
+                        "evidence": {"type": "string"},
+                        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                        "needs_review": {"type": "boolean"},
+                    },
+                },
+            },
+            "elements": {
+                "type": "array",
+                "maxItems": 40,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["name", "kind", "description", "evidence", "confidence", "needs_review"],
+                    "properties": {
+                        "name": {"type": "string"},
+                        "kind": {"type": "string", "enum": ["location", "prop", "world_rule", "organization", "other"]},
+                        "description": {"type": "string"},
+                        "evidence": {"type": "string"},
+                        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                        "needs_review": {"type": "boolean"},
+                    },
+                },
+            },
+            "story_beats": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["index", "summary", "source_excerpt", "conflict", "emotional_value"],
+                    "properties": {
+                        "index": {"type": "integer", "minimum": 1},
+                        "summary": {"type": "string"},
+                        "source_excerpt": {"type": "string"},
+                        "conflict": {"type": "string"},
+                        "emotional_value": {"type": "string"},
+                    },
+                },
+            },
+        },
+    }
+
+
+def _storyboard_schema() -> dict:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["storyboard"],
+        "properties": {
+            "storyboard": {
+                "type": "array",
+                "maxItems": 120,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": [
+                        "shot_id",
+                        "scene",
+                        "camera",
+                        "action",
+                        "narration",
+                        "dialogue",
+                        "visual_prompt",
+                        "shot_purpose",
+                        "emotion",
+                    ],
+                    "properties": {
+                        "shot_id": {"type": "string"},
+                        "scene": {"type": "string"},
+                        "camera": {"type": "string"},
+                        "action": {"type": "string"},
+                        "narration": {"type": "string"},
+                        "dialogue": {"type": "string"},
+                        "visual_prompt": {"type": "string"},
+                        "shot_purpose": {"type": "string"},
+                        "emotion": {"type": "string"},
+                    },
+                },
+            }
+        },
+    }

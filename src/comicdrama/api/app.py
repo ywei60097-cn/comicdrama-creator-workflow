@@ -56,6 +56,14 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/api/v1/llm/status")
+def llm_status() -> dict[str, object]:
+    if not processor.llm_client:
+        return {"enabled": False, "model": None, "api_base_url": None}
+    settings = processor.llm_client.settings
+    return {"enabled": True, "model": settings.model, "api_base_url": settings.api_base_url}
+
+
 @app.post("/api/v1/files/extract-text", response_model=FileExtractResponse)
 def extract_text(request: FileExtractRequest) -> FileExtractResponse:
     try:

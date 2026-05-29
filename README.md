@@ -112,6 +112,7 @@ docs/          # workflow, API, copyright, and integration guides
 
 See `docs/source-imports.md` for the full import format matrix and extension plan.
 See `docs/prompt-design.md` for task-level system prompt design.
+See `docs/llm-provider.md` for model provider configuration.
 
 ## Licensing
 

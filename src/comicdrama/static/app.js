@@ -59,6 +59,7 @@ const els = {
   download: document.querySelector("#downloadButton"),
   loadSample: document.querySelector("#loadSample"),
   status: document.querySelector("#status"),
+  modelStatus: document.querySelector("#modelStatus"),
   paramHint: document.querySelector("#paramHint"),
   params: document.querySelectorAll("[data-param]"),
   resultBody: document.querySelector("#resultBody"),
@@ -275,8 +276,10 @@ function renderCharacters() {
       <div class="item-list">
         ${characters.map((item) => `
           <article class="item">
-            <div class="item-title">${escapeHtml(item.name)}</div>
+            <div class="item-title">${escapeHtml(item.name)}${qualityBadge(item)}</div>
+            <div class="muted">${escapeHtml(item.role || "身份待补充")}${item.relationship_notes ? ` · ${escapeHtml(item.relationship_notes)}` : ""}</div>
             <div class="muted">${escapeHtml(item.first_seen || "待补充人物首次出现信息")}</div>
+            ${item.evidence ? `<div class="evidence">证据：${escapeHtml(item.evidence)}</div>` : ""}
           </article>
         `).join("") || '<div class="empty-state">暂无人物</div>'}
       </div>
@@ -284,8 +287,9 @@ function renderCharacters() {
       <div class="item-list">
         ${elements.map((item) => `
           <article class="item">
-            <div class="item-title">${escapeHtml(item.name)} · ${escapeHtml(item.kind)}</div>
+            <div class="item-title">${escapeHtml(item.name)} · ${escapeHtml(item.kind)}${qualityBadge(item)}</div>
             <div class="muted">${escapeHtml(item.description || "待补充描述")}</div>
+            ${item.evidence ? `<div class="evidence">证据：${escapeHtml(item.evidence)}</div>` : ""}
           </article>
         `).join("") || '<div class="empty-state">暂无元素</div>'}
       </div>
@@ -317,6 +321,7 @@ function renderStoryboard() {
           <th>镜头</th>
           <th>场景</th>
           <th>机位</th>
+          <th>目的/情绪</th>
           <th>画面/旁白</th>
           <th>对白</th>
         </tr>
@@ -327,6 +332,7 @@ function renderStoryboard() {
             <td>${escapeHtml(shot.shot_id)}</td>
             <td>${escapeHtml(shot.scene)}</td>
             <td>${escapeHtml(shot.camera)}</td>
+            <td>${escapeHtml([shot.shot_purpose, shot.emotion].filter(Boolean).join(" · "))}</td>
             <td>${escapeHtml(shot.action || shot.narration)}</td>
             <td>${escapeHtml(shot.dialogue)}</td>
           </tr>
@@ -462,6 +468,17 @@ function featureChips(features) {
   return (features || []).map((feature) => `<span class="chip">${escapeHtml(labels[feature] || feature)}</span>`).join("");
 }
 
+function qualityBadge(item) {
+  const parts = [];
+  if (typeof item.confidence === "number") {
+    parts.push(`${Math.round(item.confidence * 100)}%`);
+  }
+  if (item.needs_review) {
+    parts.push("需复核");
+  }
+  return parts.length ? `<span class="quality-badge">${escapeHtml(parts.join(" · "))}</span>` : "";
+}
+
 async function extractServerSide(file) {
   const response = await fetch("/api/v1/files/extract-text", {
     method: "POST",
@@ -512,3 +529,21 @@ function escapeHtml(value) {
 updateVisibleParams("all");
 updateVisibleTabs("all");
 updateRunButton("all");
+loadModelStatus();
+
+async function loadModelStatus() {
+  try {
+    const response = await fetch("/api/v1/llm/status");
+    const status = await response.json();
+    if (status.enabled) {
+      els.modelStatus.textContent = `模型已启用 · ${status.model}`;
+      els.modelStatus.classList.add("enabled");
+    } else {
+      els.modelStatus.textContent = "规则模式";
+      els.modelStatus.classList.remove("enabled");
+    }
+  } catch (error) {
+    els.modelStatus.textContent = "模型状态未知";
+    els.modelStatus.classList.remove("enabled");
+  }
+}

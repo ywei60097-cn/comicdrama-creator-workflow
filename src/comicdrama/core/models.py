@@ -69,18 +69,27 @@ class Character(BaseModel):
     first_seen: Optional[str] = None
     traits: List[str] = Field(default_factory=list)
     visual_notes: List[str] = Field(default_factory=list)
+    relationship_notes: str = ""
+    evidence: str = ""
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    needs_review: bool = False
 
 
 class SceneElement(BaseModel):
     name: str
     kind: str
     description: str = ""
+    evidence: str = ""
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    needs_review: bool = False
 
 
 class StoryBeat(BaseModel):
     index: int
     summary: str
     source_excerpt: str = ""
+    conflict: str = ""
+    emotional_value: str = ""
 
 
 class ScriptBlock(BaseModel):
@@ -97,6 +106,8 @@ class StoryboardShot(BaseModel):
     narration: str = ""
     dialogue: str = ""
     visual_prompt: str = ""
+    shot_purpose: str = ""
+    emotion: str = ""
 
 
 class BatchOperation(BaseModel):

@@ -65,7 +65,14 @@ textarea {
   color: var(--muted);
 }
 
-.status {
+.topbar-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status,
+.model-status {
   min-width: 116px;
   padding: 8px 12px;
   border: 1px solid var(--line);
@@ -73,6 +80,15 @@ textarea {
   background: var(--surface-strong);
   color: var(--muted);
   text-align: center;
+}
+
+.model-status {
+  min-width: 132px;
+  color: var(--warn);
+}
+
+.model-status.enabled {
+  color: var(--accent-strong);
 }
 
 .status.running {
@@ -499,6 +515,26 @@ textarea:focus {
   margin-bottom: 5px;
 }
 
+.quality-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  margin-left: 8px;
+  padding: 0 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.evidence {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .muted {
   color: var(--muted);
 }
@@ -558,6 +594,12 @@ pre {
 @media (max-width: 640px) {
   .topbar {
     align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-status {
+    width: 100%;
+    align-items: stretch;
     flex-direction: column;
   }
 
