@@ -234,20 +234,35 @@ function render() {
 function renderOverview() {
   const result = state.result;
   return `
-    <div class="feature-chips">
-      ${featureChips(result.config.enabled_features)}
-    </div>
-    <div class="summary-grid">
-      <div class="metric"><strong>${result.analysis.story_beats.length}</strong><span>剧情节拍</span></div>
-      <div class="metric"><strong>${result.analysis.characters.length}</strong><span>人物</span></div>
-      <div class="metric"><strong>${result.storyboard.length}</strong><span>分镜行</span></div>
-    </div>
-    <div class="prose">
-      <h3>故事梗概</h3>
-      ${paragraphs(result.analysis.synopsis)}
-      ${result.simplified_novel ? `<h3>精简小说</h3>${paragraphs(result.simplified_novel)}` : ""}
-      <h3>提示</h3>
-      <ul>${result.notices.map((notice) => `<li>${escapeHtml(notice)}</li>`).join("")}</ul>
+    <div class="overview-panel">
+      <div class="overview-topline">
+        <div class="feature-chips">
+          ${featureChips(result.config.enabled_features)}
+        </div>
+        <div class="notice-strip">${result.notices.map((notice) => `<span>${escapeHtml(notice)}</span>`).join("")}</div>
+      </div>
+      <div class="summary-grid">
+        <div class="metric"><strong>${result.analysis.story_beats.length}</strong><span>剧情节拍</span></div>
+        <div class="metric"><strong>${result.analysis.characters.length}</strong><span>人物</span></div>
+        <div class="metric"><strong>${result.storyboard.length}</strong><span>分镜行</span></div>
+      </div>
+      <div class="overview-preview-grid">
+        <section class="preview-card">
+          <div class="preview-head">
+            <h3>故事梗概</h3>
+          </div>
+          <div class="preview-scroll prose">${paragraphs(result.analysis.synopsis)}</div>
+        </section>
+        ${result.simplified_novel ? `
+          <section class="preview-card">
+            <div class="preview-head">
+              <h3>精简小说预览</h3>
+              <span>完整内容见导出结果</span>
+            </div>
+            <div class="preview-scroll prose">${paragraphs(result.simplified_novel)}</div>
+          </section>
+        ` : ""}
+      </div>
     </div>
   `;
 }

@@ -356,16 +356,15 @@ textarea:focus {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .feature-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 14px;
 }
 
 .chip {
@@ -383,13 +382,14 @@ textarea:focus {
 .metric {
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px 12px;
   background: var(--surface-strong);
 }
 
 .metric strong {
   display: block;
-  font-size: 24px;
+  font-size: 22px;
+  line-height: 1.1;
 }
 
 .metric span {
@@ -397,8 +397,85 @@ textarea:focus {
   font-size: 13px;
 }
 
+.overview-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.overview-topline {
+  display: grid;
+  gap: 10px;
+}
+
+.notice-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.notice-strip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: #f8fbfa;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.overview-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.preview-card {
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.preview-head {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.preview-head h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.preview-head span {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.preview-scroll {
+  max-height: 280px;
+  overflow: auto;
+  padding: 12px;
+}
+
 .prose h3 {
   margin: 18px 0 8px;
+}
+
+.preview-scroll.prose p:first-child {
+  margin-top: 0;
+}
+
+.preview-scroll.prose p:last-child {
+  margin-bottom: 0;
 }
 
 .prose p,
