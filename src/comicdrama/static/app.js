@@ -14,10 +14,28 @@ const state = {
   activeTab: "overview",
   result: null,
   sourceFormat: "md",
+  currentPreset: "all",
   enabledFeatures: ["simplify", "extract_elements", "convert_script", "batch_process", "assist_adaptation"],
 };
 
 const supportedUploadExtensions = new Set(["txt", "md", "markdown", "pdf", "docx", "html", "htm", "csv", "json", "rtf", "xlsx"]);
+const presetLabels = {
+  all: "全流程",
+  simplify: "小说简炼",
+  extract: "人物场景提取",
+  script: "剧本转换",
+  batch: "批量处理",
+  assist: "辅助创作",
+};
+
+const presetTabs = {
+  all: ["overview", "characters", "script", "storyboard", "batch", "assist", "json"],
+  simplify: ["overview", "json"],
+  extract: ["characters", "json"],
+  script: ["script", "storyboard", "characters", "json"],
+  batch: ["batch", "json"],
+  assist: ["assist", "characters", "json"],
+};
 
 const els = {
   title: document.querySelector("#titleInput"),
@@ -189,7 +207,7 @@ async function runWorkflow() {
 
 function render() {
   if (!state.result) {
-    els.resultBody.innerHTML = '<div class="empty-state">点击运行后查看精简小说、剧本和分镜结果。</div>';
+    els.resultBody.innerHTML = `<div class="empty-state">点击“${escapeHtml(els.run.textContent)}”后查看${escapeHtml(presetLabels[state.currentPreset])}结果。</div>`;
     return;
   }
   const renderers = {
@@ -358,8 +376,11 @@ function applyPreset(preset) {
     assist: ["extract_elements", "assist_adaptation"],
     all: ["simplify", "extract_elements", "convert_script", "batch_process", "assist_adaptation"],
   };
+  state.currentPreset = preset in presets ? preset : "all";
   state.enabledFeatures = presets[preset] || presets.all;
   updateVisibleParams(preset);
+  updateVisibleTabs(preset);
+  updateRunButton(preset);
   const targetTab = {
     simplify: "overview",
     extract: "characters",
@@ -369,6 +390,20 @@ function applyPreset(preset) {
     all: "overview",
   }[preset] || "overview";
   setActiveTab(targetTab);
+}
+
+function updateVisibleTabs(preset) {
+  const visible = presetTabs[preset] || presetTabs.all;
+  els.tabs.forEach((tab) => {
+    tab.classList.toggle("hidden", !visible.includes(tab.dataset.tab));
+  });
+  if (!visible.includes(state.activeTab)) {
+    state.activeTab = visible[0];
+  }
+}
+
+function updateRunButton(preset) {
+  els.run.textContent = `运行${presetLabels[preset] || "工作流"}`;
 }
 
 function updateVisibleParams(preset) {
@@ -451,3 +486,5 @@ function escapeHtml(value) {
 }
 
 updateVisibleParams("all");
+updateVisibleTabs("all");
+updateRunButton("all");
