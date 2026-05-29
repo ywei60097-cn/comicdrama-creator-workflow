@@ -18,3 +18,5 @@ The browser workbench exposes five selectable features:
 - Novel adaptation assistance.
 
 For production use, connect an LLM provider at the processor boundary. The deterministic MVP is intentionally conservative and exists to prove the integration contract.
+
+Task behavior should be implemented through task-level system prompts. See `prompt-design.md`.

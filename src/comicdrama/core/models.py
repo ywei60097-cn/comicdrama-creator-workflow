@@ -48,6 +48,11 @@ class WorkflowConfig(BaseModel):
     copyright_confirmation: bool = False
     enabled_features: List[str] = Field(default_factory=lambda: list(DEFAULT_ENABLED_FEATURES))
     character_reference: Optional[str] = None
+    source_chapter_range: Optional[str] = None
+    target_chapter_count: int = Field(default=3, ge=1, le=50)
+    target_chars_per_chapter: int = Field(default=1000, ge=100, le=20000)
+    length_tolerance_ratio: float = Field(default=0.15, ge=0.0, le=0.5)
+    output_format: str = "json"
     genre: Optional[str] = None
     tone: Optional[str] = None
 

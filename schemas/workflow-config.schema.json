@@ -24,6 +24,11 @@
       }
     },
     "character_reference": { "type": ["string", "null"] },
+    "source_chapter_range": { "type": ["string", "null"] },
+    "target_chapter_count": { "type": "integer", "minimum": 1, "maximum": 50 },
+    "target_chars_per_chapter": { "type": "integer", "minimum": 100, "maximum": 20000 },
+    "length_tolerance_ratio": { "type": "number", "minimum": 0, "maximum": 0.5 },
+    "output_format": { "type": "string" },
     "genre": { "type": ["string", "null"] },
     "tone": { "type": ["string", "null"] }
   },

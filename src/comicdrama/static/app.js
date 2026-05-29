@@ -48,6 +48,10 @@ const els = {
   detail: document.querySelector("#detailSelect"),
   ratio: document.querySelector("#ratioInput"),
   ratioValue: document.querySelector("#ratioValue"),
+  chapterRange: document.querySelector("#chapterRangeInput"),
+  targetChapter: document.querySelector("#targetChapterInput"),
+  targetChars: document.querySelector("#targetCharsInput"),
+  outputFormat: document.querySelector("#outputFormatSelect"),
   file: document.querySelector("#fileInput"),
   fileMeta: document.querySelector("#fileMeta"),
   upload: document.querySelector("#uploadButton"),
@@ -186,6 +190,11 @@ async function runWorkflow() {
           copyright_confirmation: els.rights.checked,
           enabled_features: enabledFeatures,
           character_reference: els.characterReference.value.trim() || null,
+          source_chapter_range: els.chapterRange.value.trim() || null,
+          target_chapter_count: Number(els.targetChapter.value || 3),
+          target_chars_per_chapter: Number(els.targetChars.value || 1000),
+          length_tolerance_ratio: 0.15,
+          output_format: els.outputFormat.value,
         },
       }),
     });
@@ -408,8 +417,8 @@ function updateRunButton(preset) {
 
 function updateVisibleParams(preset) {
   const visible = {
-    all: ["style", "script", "storyboard", "ratio"],
-    simplify: ["ratio"],
+    all: ["style", "script", "storyboard", "ratio", "simplify"],
+    simplify: ["ratio", "simplify"],
     extract: [],
     script: ["style", "script", "storyboard", "ratio"],
     batch: [],

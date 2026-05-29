@@ -131,6 +131,26 @@
             对话保留比例 <span id="ratioValue">80%</span>
             <input id="ratioInput" type="range" min="0" max="100" value="80" />
           </label>
+          <label data-param="simplify">
+            原章节范围
+            <input id="chapterRangeInput" type="text" value="前13章" />
+          </label>
+          <label data-param="simplify">
+            精简为章节数
+            <input id="targetChapterInput" type="number" min="1" max="50" value="3" />
+          </label>
+          <label data-param="simplify">
+            每章目标字数
+            <input id="targetCharsInput" type="number" min="100" max="20000" value="1000" />
+          </label>
+          <label data-param="simplify">
+            输出格式
+            <select id="outputFormatSelect">
+              <option value="docx">Word 文档</option>
+              <option value="json">JSON</option>
+              <option value="markdown">Markdown</option>
+            </select>
+          </label>
           <button class="primary-button" id="runButton" type="button">运行工作流</button>
           <button class="secondary-button" id="downloadButton" type="button" disabled>下载 JSON</button>
         </aside>
